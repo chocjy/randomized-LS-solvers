@@ -1,9 +1,9 @@
 # randomized-LS-solvers
-Solvers for large-scale least-squares problems using randomized numerical linear algebra algorithms
+Solvers for large-scale least-squares problems using randomized numerical linear algebra algorithms with Spark
 by *Jiyan Yang* (jiyanyang12@gmail.com)
 
 ## About
- Given A(n-by-d) and b(n-by-1), the least-squares regression problem is to solve:
+Given A(n-by-d) and b(n-by-1), the least-squares regression problem is to solve:
     min_x ||Ax-b||_2.
 When solving least-squares problems, randomized numerical linear algebra algorithms first compute a sketch for the linear system, then use it in one of the following two ways to get either low-precision or high-precision solutions:
 + Low-precision solvers:
