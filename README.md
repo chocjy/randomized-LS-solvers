@@ -1,5 +1,6 @@
 # randomized-LS-solvers
-Solvers for large-scale least-squares problems using randomized numerical linear algebra algorithms with Spark
+Solvers for large-scale least-squares problems using randomized numerical linear algebra algorithms with Spark.
+
 by *Jiyan Yang* (jiyanyang12@gmail.com)
 
 ## About
@@ -76,6 +77,9 @@ Some toy datasets are placed in the folder `data/` along with a file `gen_nonuni
 ./run_ls.sh nonunif_bad_1000_50 --dims 1000 50 --high --proj -p gaussian -r 200 -q 5 -k 3 -t --load_N --save_logs
 ./run_ls.sh nonunif_bad_1000_50 --dims 1000 50 --high --samp -p rademacher -s 200 -r 300 -q 3 -k 3 -t --nrepetition 5 --save_logs
 ```
+
+## Reference
+Jiyan Yang, Xiangrui Meng, and Michael W. Mahoney, [Implementing Randomized Matrix Algorithms in Parallel and Distributed Environments](http://arxiv.org/abs/1502.03032).
 
 ## License
 
