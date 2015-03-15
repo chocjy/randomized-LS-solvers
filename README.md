@@ -1,6 +1,6 @@
 # Randomized Solvers for Large-scale Least-Squares Problems with Spark
 
-This is a collection of codes that implement algorithms for solving Large-scale Least-Squares problems using randomized numerical linear algebra with Spark.
+This is a collection of codes that implement algorithms for solving large-scale least-squares problems using randomized numerical linear algebra with Spark.
 
 by *Jiyan Yang* (jiyanyang12@gmail.com)
 
