@@ -1,12 +1,12 @@
 # Randomized Solvers for Large-scale Least-Squares Problems with Spark
 
-This is a collection of codes that implement algorithms for solving large-scale least-squares problems using randomized numerical linear algebra with Spark.
+This is a collection of codes that implement algorithms for solving large-scale least-squares problems using randomized numerical linear algebra with Spark via Python API.
 
 by *Jiyan Yang* (jiyanyang12@gmail.com)
 
 ## About
-Given A(n-by-d) and b(n-by-1), the least-squares regression problem is to solve:
-    min_x ||Ax-b||_2.
+Given *A*(*n*-by-*d*) and *b*(*n*-by-*1*), the least-squares regression problem is to solve:
+    min_*x* ||*Ax-b*||_2.
 When solving least-squares problems, randomized numerical linear algebra algorithms first compute a sketch for the linear system, then use it in one of the following two ways to get either low-precision or high-precision solutions:
 + Low-precision solvers:
     solve the subproblem induced by computing a sketch
@@ -15,7 +15,7 @@ compute a preconditioner first using the sketch and invoke LSQR to solve the pre
 
 For sketch, there are two available choices:
 + projection:
-perform a random projection on A
+perform a random projection on *A*
 + sampling:
 using random projection to estimate the leverage scores first and use them to construct a sampling sketch
 
@@ -40,7 +40,7 @@ See http://arxiv.org/abs/1502.03032 for more details.
 + `log/`: stores the Spark log files (if the flag `--save_logs` in on)
 
 ## Input
-  Current implementation assumes that the matrix that stores the augmented linear system [A b] is stored in plain text format with file name FILENAME.txt (meaning the last column is the RHS vector b). It can be stored either locally or in HDFS. For the purpose of evaluating the computed solutions, files named FILENAME_x_opt.txt and FILENAME_f_opt.txt which store the optimal solution vector and objective value should be provided in `data_dire` (see below); otherwise they will be computed in the program which might take long. To generate larger matrices, one can use the option `--nrepetitions NUM` to creat a larger matrix by stacking the original one vertically NUM times.
+  Current implementation assumes that the matrix that stores the augmented linear system [*A* *b*] is stored in plain text format with file name FILENAME.txt (meaning the last column is the RHS vector b). It can be stored either locally or in HDFS. For the purpose of evaluating the computed solutions, files named FILENAME_x_opt.txt and FILENAME_f_opt.txt which store the optimal solution vector and objective value should be provided in `data_dire` (see below); otherwise they will be computed in the program which might take long. To generate larger matrices, one can use the option `--nrepetitions NUM` to creat a larger matrix by stacking the original one vertically NUM times.
 
 ## Output
   A file which stores the computed solutions and total running time will be stored (default file name is ls.out) in the `result/` subdirectory. This file can be opened by the cPickle module.
