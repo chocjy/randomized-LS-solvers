@@ -62,7 +62,7 @@ class BlockMapper:
         for result in self.close():
             yield result
 
-    def process(self,**kwargs):
+    def process(self, **kwargs):
         return iter([])
     
     def close(self):

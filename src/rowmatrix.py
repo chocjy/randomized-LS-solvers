@@ -6,14 +6,14 @@ logger = logging.getLogger(__name__)
 
 class RowMatrix(object):
     '''
-    A row matrix class
+    A row matrix class that holds the augmented matrix [A b]
     '''
 
     def __init__(self, rdd, name, m=None, n=None, cache=False, stack_type=1, repnum=1):
         '''
         rdd: RDD object that stores the matrix row wise,
         name: name of the matrix
-        m, n: actual size of the matrix
+        m, n: size of the matrix A
         cache: cache the matrix or not
         repnum: number of times to replicate the matrix vertically
         '''
@@ -52,16 +52,21 @@ class RowMatrix(object):
 
     def get_b(self):
         getb_mapper = GetbMapper()
-        b_dict = self.rdd.mapPartitions(getb_mapper).collectAsMap()
-        order = sorted(b_dict.keys())
+        b = self.rdd.mapPartitions(getb_mapper).collect()
+        
+        b_in_dict = dict()
+        for k, v in b:
+            b_in_dict.update( dict(zip(k,v)) )
 
-        b = []
-        for i in order:
-            b.append( b_dict[i] )
+        #order = sorted(b_dict.keys())
 
-        b = np.hstack(b)
+        #b = []
+        #for i in order:
+        #    b.append( b_dict[i] )
 
-        return b
+        #b = np.hstack(b)
+
+        return b_in_dict
 
     def rtimes_vec(self,vec):
         '''
@@ -74,32 +79,40 @@ class RowMatrix(object):
         vec = self.rdd.context.broadcast(vec)
 
         matrix_rtimes_mapper = MatrixRtimesMapper()
-        a = self.rdd.mapPartitions(lambda records: matrix_rtimes_mapper(records,vec=vec.value) )
+        a = self.rdd.mapPartitions(lambda records: matrix_rtimes_mapper(records,vec=vec.value) ).collect()
+        
+        vec_in_dict = dict()
+        for k, v in a:
+            vec_in_dict.update( dict(zip(k,v)) )
 
-        a_dict = a.collectAsMap()
-        order = sorted(a_dict.keys())
+        return vec_in_dict
 
-        b = []
-        for i in order:
-            b.append( a_dict[i] )
+        # no sorting here
+        #b = a.collectAsMap()
+        #order = sorted(a_dict.keys())
 
-        b = np.hstack(b)
+        #b = []
+        #for i in order:
+        #    b.append( a_dict[i] )
 
-        return b
+        #b = np.hstack(b)
 
-    def ltimes_vec(self,vec):
+        #return b
+
+    def ltimes_vec(self,vec_in_dict):
         '''
         This code computes u*A
         '''
 
         # TO-DO: check dimension compatibility
-        if vec.ndim > 1:
-            vec = vec.squeeze()
+        #if vec.ndim > 1:
+        #    vec = vec_in_dict.squeeze()
 
-        vec = self.rdd.context.broadcast(vec)
+
+        vec_in_dict = self.rdd.context.broadcast(vec_in_dict)
 
         matrix_ltimes_mapper = MatrixLtimesMapper()
-        b = self.rdd.mapPartitions(lambda records: matrix_ltimes_mapper(records,vec=vec.value)).sum()
+        b = self.rdd.mapPartitions(lambda records: matrix_ltimes_mapper(records,vec_in_dict=vec_in_dict.value)).sum()
         #b_dict = self.rdd.mapPartitions(lambda records: matrix_ltimes_mapper(records,mat=mat.value,feats=feats) ).reduceByKey(add).collectAsMap()
 
         return b
@@ -124,14 +137,14 @@ class RowMatrix(object):
 class GetbMapper(BlockMapper):
 
     def process(self):
-        yield self.keys[0], np.vstack(self.data)[:,-1]
+        yield self.keys, np.vstack(self.data)[:,-1].tolist()
 
 class MatrixRtimesMapper(BlockMapper):
 
     def process(self, vec):
-        p = np.dot(np.vstack(self.data), np.append(vec,0))
+        p = np.dot(np.vstack(self.data), np.append(vec,0)) # append the vector with zero since we are computing A*v
         #p = np.dot(np.vstack(self.data)[:,:-1], vec)
-        yield self.keys[0], p
+        yield self.keys, p.tolist()
 
 class MatrixLtimesMapper(BlockMapper):
 
@@ -139,11 +152,14 @@ class MatrixLtimesMapper(BlockMapper):
         BlockMapper.__init__(self)
         self.ba = None
 
-    def process(self, vec):
+    def process(self, vec_in_dict):
+
+        vec = np.array( [vec_in_dict[k] for k in self.keys] )
+
         if self.ba:
-            self.ba += np.dot( vec[self.keys[0]:(self.keys[-1]+1)], np.vstack(self.data) )
+            self.ba += np.dot( vec, np.vstack(self.data) )
         else:
-            self.ba = np.dot( vec[self.keys[0]:(self.keys[-1]+1)], np.vstack(self.data) )
+            self.ba = np.dot( vec, np.vstack(self.data) )
 
         return iter([])
 
