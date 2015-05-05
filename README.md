@@ -77,6 +77,7 @@ Some toy datasets are placed in the folder `data/` along with a file `gen_nonuni
 ./run_ls.sh nonunif_bad_1000_50 --dims 1000 50 --low --samp -p gaussian -s 400 -r 200 -k 3 -t --load_N --save_N
 ./run_ls.sh nonunif_bad_1000_50 --dims 1000 50 --high --proj -p gaussian -r 200 -q 5 -k 3 -t --load_N --save_logs
 ./run_ls.sh nonunif_bad_1000_50 --dims 1000 50 --high --samp -p rademacher -s 200 -r 300 -q 3 -k 3 -t --nrepetition 5 --save_logs
+./run_ls.sh nonunif_bad_1000_10 --dims 1000 10 --high --proj -p srdht -r 200 --nrep 10 -q 3 -k 1 -t --load_N --save_logs --save_N --hdfs
 ```
 
 ## Reference
