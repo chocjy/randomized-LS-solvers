@@ -48,7 +48,7 @@ See http://arxiv.org/abs/1502.03032 for more details.
 ## Configuration
   The Spark configurations can be set via the script `run_ls.sh` from which the Spark job is submitted.
 
-  Besides, there are three directories needed to be set so that the files can be properly loaded and saved. They are located in the `main` function of the `run_ls.py` file.
+  Besides, there are three directories needed to be set so that the files can be properly loaded and saved. They can be set via the file `settings.cfg`.
 
 + `data_dire`: path to local data files
 + `hdfs_dire`: path in HDFS which stores the data files
