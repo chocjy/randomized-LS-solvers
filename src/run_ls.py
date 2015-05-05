@@ -7,6 +7,7 @@ import time
 import sys
 import os
 import argparse
+import ConfigParser
 import scipy.stats
 import numpy as np
 import logging.config
@@ -56,12 +57,16 @@ class OptionError(Exception):
     pass
 
 def main(argv):
-    # TO-DO: put these to a configuration file
-    data_dire = '../data/'
-    hdfs_dire = 'data/'
-    logs_dire = 'file://'+os.path.dirname(os.path.abspath(__file__))+'/../log/'
+    # loading configuration file
+    settings_file = 'settings.cfg'
+    config = ConfigParser.RawConfigParser()
+    config.read(settings_file)
+
+    data_dire = config.get('directories','data_dire')
+    hdfs_dire = config.get('directories','hdfs_dire')
+    logs_dire = 'file://'+os.path.dirname(os.path.abspath(__file__))+config.get('directories','logs_dire')
     
-    logging.config.fileConfig('logging.conf',disable_existing_loggers=False) # setting up the parser
+    logging.config.fileConfig('logging.cfg',disable_existing_loggers=False) # setting up the parser
     logger = logging.getLogger('') #using root
 
     parser = argparse.ArgumentParser(description='Getting parameters.',prog='run_ls.sh')

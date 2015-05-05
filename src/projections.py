@@ -34,7 +34,7 @@ class Projections(object):
         objective: either 'x' or 'N'
             'x': the function returns the solution to the problem min_x || PA[:,:-1]x - PA[:,-1] ||_2
             'N': the function returns a square matrix N such that PA[:,:-1]*inv(N) is a matrix with orthonormal columns
-        return_N: when the objective is 'x', whether to return the matrix N which makes PA[:,:-1]*inv(N) has orthonormal columns
+        return_N: when the objective is 'x', whether to return the matrix N which makes PA[:,:-1]*inv(N) have orthonormal columns
         """
         logger.info('In projections, computing {0}!'.format(objective))
         PA = self.__project(rowmatrix)

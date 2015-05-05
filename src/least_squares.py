@@ -9,7 +9,7 @@ logger = logging.getLogger(__name__)
 
 class RandLeastSquares:
     """
-    This code implements randomized algorithms for least-squares regression problems on Spark.
+    This class implements randomized algorithms for least-squares regression problems on Spark.
     Author: Jiyan Yang (jiyan@stanford.edu)
     """
     def __init__(self, matrix_Ab, solver_type, **kwargs):

@@ -8,15 +8,15 @@ logger = logging.getLogger(__name__)
 
 def comp_sketch(matrix, objective, load_N=False, save_N=False, N_dire='../N_file/', **kwargs):
     """
-    Given matrix A, the function comp_sketch computes sketch for A and performs further operations on PA.
-    It returns the total running time and desired quantity.
+    Given matrix A, the function comp_sketch computes a sketch for A and performs further operations on PA.
+    It returns the total running time and the desired quantity.
 
     parameter:
-        matrix: a RowMatrix object storing the matrix A
+        matrix: a RowMatrix object storing the matrix [A b]
         objective: either 'x' or 'N'
             'x': the function returns the solution to the problem min_x || PA[:,:-1]x - PA[:,-1] ||_2
             'N': the function returns a square matrix N such that PA[:,:-1]*inv(N) is a matrix with orthonormal columns
-        load_N: load the precomputed N matrices if possible (it reduce the actual running time for sampling sketches)
+        load_N: load the precomputed N matrices if possible (it reduces the actual running time for sampling sketches)
         save_N: save the computed N matrices for future use
         sketch_type: either 'projection' or 'sampling'
         projection_type: cw, gaussian, rademacher or srdht
@@ -168,9 +168,4 @@ def comp_sketch(matrix, objective, load_N=False, save_N=False, N_dire='../N_file
 
 if __name__ == '__main__':
     _test()
-
-
-
-
-
 

@@ -106,8 +106,8 @@ class SketchTestCase(unittest.TestCase):
 loader = unittest.TestLoader()
 suite_list = []
 suite_list.append( loader.loadTestsFromTestCase(MatrixMultiplicationTestCase) )
-#suite_list.append( loader.loadTestsFromTestCase(ProjectionTestCase) )
-#suite_list.append( loader.loadTestsFromTestCase(SketchTestCase) )
+suite_list.append( loader.loadTestsFromTestCase(ProjectionTestCase) )
+suite_list.append( loader.loadTestsFromTestCase(SketchTestCase) )
 suite = unittest.TestSuite(suite_list)
 
 if __name__ == '__main__':
