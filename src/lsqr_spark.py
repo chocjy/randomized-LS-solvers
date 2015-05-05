@@ -26,18 +26,12 @@ def lsqr_spark( matrix_Ab, b, m, n, N, tol=1e-14, iter_lim=None):
 
     max_n_stag = 3
 
-    # getting b (TO-DO: make it faster)
-    #vec = np.zeros((n+1,1))
-    #vec[n,0] = 1 
-    #u = matrix_Ab.rtimes(vec).squeeze()
+    u = matrix_Ab.get_b()
 
-    u = matrix_Ab.get_b() # u is a dict
-
-    beta = norm(np.array(u.values)) 
-    #u   /= beta
+    beta = norm(u) 
+    u   /= beta
 
     v = np.dot( matrix_Ab.ltimes_vec(u), N ).squeeze() # v is an array
-    v /= beta
 
     alpha = norm(v)
     if alpha != 0:
@@ -55,7 +49,7 @@ def lsqr_spark( matrix_Ab, b, m, n, N, tol=1e-14, iter_lim=None):
     nrm_r    = beta
     nrm_ar_0 = alpha*beta
 
-    if nrm_ar_0 == 0:                     # alpha == 0 || beta == 0
+    if nrm_ar_0 == 0:     # alpha == 0 || beta == 0
         return x, 0, 0
 
     nrm_x  = 0
@@ -72,22 +66,13 @@ def lsqr_spark( matrix_Ab, b, m, n, N, tol=1e-14, iter_lim=None):
 
     for itn in xrange(int(iter_lim)):
 
-        p = matrix_Ab.rtimes_vec(np.dot(N,v))
-        temp = dict()
-        elem_sq_sum = 0
-        for k in p:
-            temp[k] = p[k] - alpha*u[k]
-            elem_sq_sum += temp[k]**2
-        u = temp
-        beta = np.sqrt(elem_sq_sum)
-
-        #u = matrix_Ab.rtimes_vec(np.dot(N,v)).squeeze() - alpha*u
-        #beta = norm(u)
-        #u   /= beta
+        u = matrix_Ab.rtimes_vec(np.dot(N,v)).squeeze() - alpha*u
+        beta = norm(u)
+        u   /= beta
 
         nrm_a = sqrt(nrm_a**2 + alpha**2 + beta**2)
 
-        v = np.dot( matrix_Ab.ltimes_vec(u), N).squeeze()/beta - beta*v
+        v = np.dot( matrix_Ab.ltimes_vec(u), N).squeeze() - beta*v
 
         alpha = norm(v)
         v    /= alpha

@@ -121,7 +121,7 @@ def main(argv):
     sc = SparkContext(appName="ls_exp",conf=conf)
 
     if args.file_source=='hdfs':
-        Ab_rdd = sc.textFile(hdfs_dire+args.dataset,args.npartitions) #loading dataset from HDFS
+        Ab_rdd = sc.textFile(hdfs_dire+args.dataset+'.txt',args.npartitions) #loading dataset from HDFS
     else:
         A = np.loadtxt(data_dire+args.dataset+'.txt') #loading dataset from local disc
         Ab_rdd = sc.parallelize(A.tolist(),args.npartitions)
@@ -158,6 +158,3 @@ def main(argv):
     
 if __name__ == "__main__":
     main(sys.argv[1:])
-
-
-

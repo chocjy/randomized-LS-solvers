@@ -14,16 +14,19 @@ class MatrixMultiplicationTestCase(unittest.TestCase):
         vec = np.random.rand(10)
         p = self.matrix_Ab.rtimes_vec(vec)
         p_true = np.dot( A, vec )
+
         self.assertTrue( np.linalg.norm(p-p_true) < 1e-5 )
 
     def test_mat_ltimes(self):
         vec = np.random.rand(1000)
         p = self.matrix_Ab.ltimes_vec(vec)
         p_true = np.dot( vec, A )
+
         self.assertTrue( np.linalg.norm(p-p_true) < 1e-5 )
 
     def test_get_b(self):
         b = self.matrix_Ab.get_b()
+        
         self.assertTrue( np.linalg.norm(b - Ab[:,-1]) < 1e-5 )
 
 class ProjectionTestCase(unittest.TestCase):
@@ -103,8 +106,8 @@ class SketchTestCase(unittest.TestCase):
 loader = unittest.TestLoader()
 suite_list = []
 suite_list.append( loader.loadTestsFromTestCase(MatrixMultiplicationTestCase) )
-suite_list.append( loader.loadTestsFromTestCase(ProjectionTestCase) )
-suite_list.append( loader.loadTestsFromTestCase(SketchTestCase) )
+#suite_list.append( loader.loadTestsFromTestCase(ProjectionTestCase) )
+#suite_list.append( loader.loadTestsFromTestCase(SketchTestCase) )
 suite = unittest.TestSuite(suite_list)
 
 if __name__ == '__main__':
