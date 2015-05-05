@@ -146,8 +146,8 @@ def main(argv):
     if args.test:  #only need to load these in the test mode
         if os.path.isfile(data_dire+args.dataset+'_x_opt.txt'):
             logger.info('Found precomputed optimal solutions!')
-            x_opt = np.loadtxt(dire+args.dataset+'_x_opt.txt')
-            f_opt = np.loadtxt(dire+args.dataset+'_f_opt.txt')
+            x_opt = np.loadtxt(data_dire+args.dataset+'_x_opt.txt')
+            f_opt = np.loadtxt(data_dire+args.dataset+'_f_opt.txt')
         else:
             logger.info('Computing optimal solutions!')
             Ab = np.array(matrix_Ab.rdd_original.values().collect()) # might not be accurate, needed to check
