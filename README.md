@@ -50,9 +50,9 @@ See http://arxiv.org/abs/1502.03032 for more details.
 
   Besides, there are three directories needed to be set so that the files can be properly loaded and saved. They can be set via the file `settings.cfg`.
 
-+ `data_dire`: path to local data files
-+ `hdfs_dire`: path in HDFS which stores the data files
-+ `logs_dire`: path to the folder that stores the Spark log files (if the flag `--save_logs` in on)
++ `data_dir`: path to local data files
++ `hdfs_dir`: path in HDFS which stores the data files
++ `logs_dir`: path to the folder that stores the Spark log files (if the flag `--save_logs` in on)
 
 ## Usage
 ```sh
