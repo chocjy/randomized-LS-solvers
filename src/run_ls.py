@@ -62,9 +62,9 @@ def main(argv):
     config = ConfigParser.RawConfigParser()
     config.read(settings_file)
 
-    data_dire = config.get('directories','data_dire')
-    hdfs_dire = config.get('directories','hdfs_dire')
-    logs_dire = 'file://'+os.path.dirname(os.path.abspath(__file__))+config.get('directories','logs_dire')
+    data_dir = config.get('directories','data_dir')
+    hdfs_dir = config.get('directories','hdfs_dir')
+    logs_dir = 'file://'+os.path.dirname(os.path.abspath(__file__))+config.get('directories','logs_dir')
     
     logging.config.fileConfig('logging.cfg',disable_existing_loggers=False) # setting up the parser
     logger = logging.getLogger('') #using root
@@ -120,15 +120,15 @@ def main(argv):
  
     # instantializing a Spark instance
     if args.save_logs:
-        conf = SparkConf().set('spark.eventLog.enabled','true').set('spark.eventLog.dir',logs_dire)
+        conf = SparkConf().set('spark.eventLog.enabled','true').set('spark.eventLog.dir',logs_dir)
     else:
         conf = SparkConf()
     sc = SparkContext(appName="ls_exp",conf=conf)
 
     if args.file_source=='hdfs':
-        Ab_rdd = sc.textFile(hdfs_dire+args.dataset+'.txt',args.npartitions) #loading dataset from HDFS
+        Ab_rdd = sc.textFile(hdfs_dir+args.dataset+'.txt',args.npartitions) #loading dataset from HDFS
     else:
-        A = np.loadtxt(data_dire+args.dataset+'.txt') #loading dataset from local disc
+        A = np.loadtxt(data_dir+args.dataset+'.txt') #loading dataset from local disc
         Ab_rdd = sc.parallelize(A.tolist(),args.npartitions)
 
     matrix_Ab = RowMatrix(Ab_rdd,args.dataset,m,n+1,args.cache,repnum=args.nrepetitions) # creating a RowMatrix instance
@@ -144,10 +144,10 @@ def main(argv):
     logger.info('Total time elapsed:{0}'.format( ls.time ))
 
     if args.test:  #only need to load these in the test mode
-        if os.path.isfile(data_dire+args.dataset+'_x_opt.txt'):
+        if os.path.isfile(data_dir+args.dataset+'_x_opt.txt'):
             logger.info('Found precomputed optimal solutions!')
-            x_opt = np.loadtxt(data_dire+args.dataset+'_x_opt.txt')
-            f_opt = np.loadtxt(data_dire+args.dataset+'_f_opt.txt')
+            x_opt = np.loadtxt(data_dir+args.dataset+'_x_opt.txt')
+            f_opt = np.loadtxt(data_dir+args.dataset+'_f_opt.txt')
         else:
             logger.info('Computing optimal solutions!')
             Ab = np.array(matrix_Ab.rdd_original.values().collect()) # might not be accurate, needed to check
