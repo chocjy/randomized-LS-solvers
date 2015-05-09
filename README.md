@@ -11,7 +11,7 @@ When solving least-squares problems, randomized numerical linear algebra algorit
 + Low-precision solvers:
     solve the subproblem induced by computing a sketch
 + High-precision solvers:
-compute a preconditioner first using the sketch and invoke LSQR to solve the preconditioned problem
+compute a preconditioner using the sketch and invoke LSQR to solve the preconditioned problem
 
 For sketch, there are two available choices:
 + projection:
