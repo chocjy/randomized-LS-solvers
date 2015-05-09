@@ -46,7 +46,7 @@ class RandLeastSquares:
             if sketch_type is not None:
                 N, time_proj = comp_sketch(self.matrix_Ab, 'N', load_N, save_N, **self.params)
             else:
-                N = [np.eye(self.matrix_Ab.n-1)]
+                N = [np.eye(self.matrix_Ab.n)]
                 self.k = 1
                 time_proj = 0
 
@@ -57,7 +57,7 @@ class RandLeastSquares:
             x = []
  
             for i in range(self.k):
-                x_iter, y_iter, time_iter = lsqr_spark(self.matrix_Ab,b,self.matrix_Ab.m,self.matrix_Ab.n-1,N[i],1e-10,num_iters)
+                x_iter, y_iter, time_iter = lsqr_spark(self.matrix_Ab,b,self.matrix_Ab.m,self.matrix_Ab.n,N[i],1e-10,num_iters)
                 x.append(x_iter)
                 time = [time[i] + time_iter[i] for i in range(num_iters)]
             
