@@ -131,7 +131,7 @@ def main(argv):
         A = np.loadtxt(data_dir+args.dataset+'.txt') #loading dataset from local disc
         Ab_rdd = sc.parallelize(A.tolist(),args.npartitions)
 
-    matrix_Ab = RowMatrix(Ab_rdd,args.dataset,m,n+1,args.cache,repnum=args.nrepetitions) # creating a RowMatrix instance
+    matrix_Ab = RowMatrix(Ab_rdd,args.dataset,m,n,args.cache,repnum=args.nrepetitions) # creating a RowMatrix instance
 
     t = time.time()
     ls = RandLeastSquares(matrix_Ab,solver_type=args.solver_type,sketch_type=args.sketch_type,projection_type=args.projection_type,c=args.r,s=args.s,num_iters=args.q,k=args.k)
