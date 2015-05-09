@@ -133,7 +133,6 @@ def main(argv):
 
     matrix_Ab = RowMatrix(Ab_rdd,args.dataset,m,n,args.cache,repnum=args.nrepetitions) # creating a RowMatrix instance
 
-    t = time.time()
     ls = RandLeastSquares(matrix_Ab,solver_type=args.solver_type,sketch_type=args.sketch_type,projection_type=args.projection_type,c=args.r,s=args.s,num_iters=args.q,k=args.k)
 
     ls.fit(args.load_N, args.save_N,args.debug) # solving the problem
