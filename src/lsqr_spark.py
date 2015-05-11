@@ -7,7 +7,7 @@ import time
 import logging
 logger = logging.getLogger(__name__)
 
-def lsqr_spark( matrix_Ab, b, m, n, N, tol=1e-14, iter_lim=None):
+def lsqr_spark( matrix_Ab, m, n, N, tol=1e-14, iter_lim=None):
     """
     A simple version of LSQR on Spark
     """

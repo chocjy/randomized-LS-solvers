@@ -36,7 +36,7 @@ class RowMatrix(object):
                 self.m = self.m_original*repnum
             elif stack_type == 2:
                 n = self.n
-                self.rdd = add_index(self.rdd_original).flatMap(lambda row: [row[0] for i in range(repnum)] if row[1]<self.m_original-n/2 else [row[0]])
+                self.rdd = self.rdd_original.flatMap(lambda row: [row for i in range(repnum)] if len(np.nonzero(row)[0])>2 else [row])
                 self.m = (self.m_original-self.n/2)*repnum + self.n/2
         else:
             self.name = name
@@ -86,7 +86,6 @@ class RowMatrix(object):
         # TO-DO: check dimension compatibility
         if vec.ndim > 1:
             vec = vec_in_dict.squeeze()
-
 
         vec = self.rdd.context.broadcast(vec)
 

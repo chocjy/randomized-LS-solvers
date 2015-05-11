@@ -21,6 +21,7 @@ def print_params(args, logger):
     logger.info('loading file from {0}'.format( args.file_source ))
     if args.nrepetitions>1:
         logger.info('number of repetitions: {0}'.format( args.nrepetitions ))
+        logger.info('stack type is: {0}'.format( args.stack_type ))
     logger.info('number of partitions: {0}'.format( args.npartitions ))
     if args.cache:
         logger.info('cache the dataset')
@@ -75,6 +76,7 @@ def main(argv):
            dataset.txt stores the original matrix (only needed for -t);')
     parser.add_argument('--dims', metavar=('m','n'), type=int, nargs=2, required=True, help='size of the input matrix')
     parser.add_argument('--nrepetitions', metavar='numRepetitions', default=1, type=int, help='number of times to stack matrix vertically in order to generate large matrices')
+    parser.add_argument('--stack', metavar='stack type', dest='stack_type', type=int, default=1, help='stack type')
     parser.add_argument('--npartitions', metavar='numPartitions', default=280, type=int, help='number of partitions in Spark')
     parser.add_argument('-c', '--cache', action='store_true', help='cache the dataset in Spark')
     parser.add_argument('--hdfs', dest='file_source', default='local', action='store_const', const='hdfs', help='load dataset from HDFS (default: loading local files)')
@@ -85,13 +87,13 @@ def main(argv):
     group.add_argument('--projection', dest='sketch_type', action='store_const', const='projection', help='compute sketch by projection')
     group.add_argument('--sampling', dest='sketch_type', action='store_const', const='sampling', help='compute sketch by sampling')
     parser.add_argument('-p', dest='projection_type', default='gaussian', choices=('cw','gaussian','rademacher','srdht'), help='underlying projection type')
-    parser.add_argument('-r', metavar='projectionSize', required=True, type=int, help='sketch size')
+    parser.add_argument('-r', metavar='projectionSize', type=int, help='sketch size')
     parser.add_argument('-s', metavar='samplingSize', type=int, help='sampling size (for samping sektch only)')
     parser.add_argument('-q', '--niters', metavar='numIters', dest='q', type=int, help='number of iterations in LSQR')
     parser.add_argument('-k', '--ntrials', metavar='numTrials', dest='k', default=1, type=int, help='number of independent trials to run')
     parser.add_argument('-t', '--test', action='store_true', help='compute accuracies of the returned solutions')
     parser.add_argument('--save_logs', action='store_true', help='save Spark logs')
-    parser.add_argument('--output_filename', default='ls.out', help='filename of the output file (default: ls.out)')
+    parser.add_argument('--output_filename', metavar='output filename', default='ls.out', help='filename of the output file (default: ls.out)')
     parser.add_argument('--load_N', action='store_true', help='load N')
     parser.add_argument('--save_N', action='store_true', help='save N')
     parser.add_argument('--debug', action='store_true', help='debug mode')
@@ -116,6 +118,9 @@ def main(argv):
     if args.solver_type == 'low_precision' and args.sketch_type is None:
         raise ValueError('Please specify a sketch method for the low-precision solver!')
 
+    if args.sketch_type and args.r is None:
+        raise ValueError('Please enter a projection size!')
+
     print_params(args, logger) # print parameters
  
     # instantializing a Spark instance
@@ -131,9 +136,8 @@ def main(argv):
         A = np.loadtxt(data_dir+args.dataset+'.txt') #loading dataset from local disc
         Ab_rdd = sc.parallelize(A.tolist(),args.npartitions)
 
-    matrix_Ab = RowMatrix(Ab_rdd,args.dataset,m,n,args.cache,repnum=args.nrepetitions) # creating a RowMatrix instance
+    matrix_Ab = RowMatrix(Ab_rdd,args.dataset,m,n,args.cache,stack_type=args.stack_type,repnum=args.nrepetitions) # creating a RowMatrix instance
 
-    t = time.time()
     ls = RandLeastSquares(matrix_Ab,solver_type=args.solver_type,sketch_type=args.sketch_type,projection_type=args.projection_type,c=args.r,s=args.s,num_iters=args.q,k=args.k)
 
     ls.fit(args.load_N, args.save_N,args.debug) # solving the problem
