@@ -27,6 +27,9 @@ def print_params(args, logger):
         logger.info('cache the dataset')
     logger.info('Results will be stored to {0}'.format(args.output_filename))
     logger.info('------------------------------------------------------------')
+    logger.info('loading setting configuration file from {0}'.format(args.setting_filename))
+    logger.info('loading logging configuration file from {0}'.format(args.logging_filename))
+    logger.info('------------------------------------------------------------')
     logger.info('solver: {0}'.format( args.solver_type ))
     logger.info('sketch type: {0}'.format( args.sketch_type ))
     if args.sketch_type:
@@ -58,18 +61,6 @@ class OptionError(Exception):
     pass
 
 def main(argv):
-    # loading configuration file
-    settings_file = 'settings.cfg'
-    config = ConfigParser.RawConfigParser()
-    config.read(settings_file)
-
-    data_dir = config.get('directories','data_dir')
-    hdfs_dir = config.get('directories','hdfs_dir')
-    logs_dir = 'file://'+os.path.dirname(os.path.abspath(__file__))+config.get('directories','logs_dir')
-    
-    logging.config.fileConfig('logging.cfg',disable_existing_loggers=False) # setting up the parser
-    logger = logging.getLogger('') #using root
-
     parser = argparse.ArgumentParser(description='Getting parameters.',prog='run_ls.sh')
 
     parser.add_argument('dataset', type=str, help='dataset_Ab.txt stores the input matrix to run CX on; \
@@ -78,8 +69,11 @@ def main(argv):
     parser.add_argument('--nrepetitions', metavar='numRepetitions', default=1, type=int, help='number of times to stack matrix vertically in order to generate large matrices')
     parser.add_argument('--stack', metavar='stack type', dest='stack_type', type=int, default=1, help='stack type')
     parser.add_argument('--npartitions', metavar='numPartitions', default=280, type=int, help='number of partitions in Spark')
+    parser.add_argument('--setting_filename', metavar='setting filename', default='settings.cfg', type=str, help='name of the configuration file storing the settings')
+    parser.add_argument('--logging_filename', metavar='logging filename', default='logging.cfg', type=str, help='configuration file for logging')
     parser.add_argument('-c', '--cache', action='store_true', help='cache the dataset in Spark')
-    parser.add_argument('--hdfs', dest='file_source', default='local', action='store_const', const='hdfs', help='load dataset from HDFS (default: loading local files)')
+    parser.add_argument('--hdfs', dest='file_source', default='local', action='store_const', const='hdfs', help='load dataset from HDFS (default: loading files from local)')
+    parser.add_argument('--s3', dest='file_source', default='local', action='store_const', const='s3', help='load dataset from Amazon S3 (default: loading files from local)')
     group = parser.add_mutually_exclusive_group()
     group.add_argument('--low-precision', dest='solver_type', default='low_precision', action='store_const', const='low_precision', help='use low-precision solver')
     group.add_argument('--high_precision', dest='solver_type', default='low_precision', action='store_const', const='high_precision', help='use high_precision solver')
@@ -121,17 +115,41 @@ def main(argv):
     if args.sketch_type and args.r is None:
         raise ValueError('Please enter a projection size!')
 
-    print_params(args, logger) # print parameters
+    # loading configuration file
+    #settings_file = 'settings.cfg'
+    config = ConfigParser.RawConfigParser()
+    config.read(args.setting_filename)
+
+    data_dir = config.get('directories','data_dir')
+    hdfs_dir = config.get('directories','hdfs_dir')
+    spark_logs_dir = 'file://'+os.path.dirname(os.path.abspath(__file__))+config.get('directories','spark_logs_dir')
+    
+    logging.config.fileConfig(args.logging_filename, disable_existing_loggers=False) # setting up the logger
+    logger = logging.getLogger('') #using root
+
+    print_params(args, logger) # printing parameters
  
     # instantializing a Spark instance
     if args.save_logs:
-        conf = SparkConf().set('spark.eventLog.enabled','true').set('spark.eventLog.dir',logs_dir)
+        conf = SparkConf().set('spark.eventLog.enabled','true').set('spark.eventLog.dir',spark_logs_dir)
     else:
         conf = SparkConf()
     sc = SparkContext(appName="ls_exp",conf=conf)
 
     if args.file_source=='hdfs':
         Ab_rdd = sc.textFile(hdfs_dir+args.dataset+'.txt',args.npartitions) #loading dataset from HDFS
+    elif args.file_source=='s3':
+        key_id = config.get('s3','key_id')
+        secret_key = config.get('s3','secret_key')
+        #key_id='AKIAI2R46NYDXGT2LJEQ'
+        #secret_key='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'
+        Ab_rdd = sc.textFile('s3n://'+key_id+':'+secret_key+'@jiyan/rand_matrix_alg_data/'+filename+'txt',args.npartitions)
+        #x_opt = sc.textFile('s3n://'+key_id+':'+secret_key+'@jiyan/rand_matrix_alg_data/'+filename+'_x_opt.txt')
+        #x_opt = np.array([float(x) for x in x_opt.collect()])
+        #f_opt = sc.textFile('s3n://'+key_id+':'+secret_key+'@jiyan/rand_matrix_alg_data/'+filename+'_f_opt.txt')
+        #f_opt = float(f_opt.collect()[0])
+        #b = sc.textFile('s3n://'+key_id+':'+secret_key+'@jiyan/rand_matrix_alg_data/'+filename+'_b.txt')
+        #b = np.array([float(x) for x in b.collect()])
     else:
         A = np.loadtxt(data_dir+args.dataset+'.txt') #loading dataset from local disc
         Ab_rdd = sc.parallelize(A.tolist(),args.npartitions)

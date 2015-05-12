@@ -1,0 +1,5 @@
+1. clone the git repo
+2. get settings_jiyan.cfg
+3. fetch x_opt and f_opt files
+4. modify the submit command to load data from S3
+
