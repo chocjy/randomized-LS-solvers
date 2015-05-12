@@ -69,8 +69,8 @@ def main(argv):
     parser.add_argument('--nrepetitions', metavar='numRepetitions', default=1, type=int, help='number of times to stack matrix vertically in order to generate large matrices')
     parser.add_argument('--stack', metavar='stack type', dest='stack_type', type=int, default=1, help='stack type')
     parser.add_argument('--npartitions', metavar='numPartitions', default=280, type=int, help='number of partitions in Spark')
-    parser.add_argument('--setting_filename', metavar='setting filename', default='settings.cfg', type=str, help='name of the configuration file storing the settings')
-    parser.add_argument('--logging_filename', metavar='logging filename', default='logging.cfg', type=str, help='configuration file for logging')
+    parser.add_argument('--setting_filename', metavar='setting filename', default='conf/settings.cfg', type=str, help='name of the configuration file storing the settings')
+    parser.add_argument('--logging_filename', metavar='logging filename', default='conf/logging.cfg', type=str, help='configuration file for logging')
     parser.add_argument('-c', '--cache', action='store_true', help='cache the dataset in Spark')
     parser.add_argument('--hdfs', dest='file_source', default='local', action='store_const', const='hdfs', help='load dataset from HDFS (default: loading files from local)')
     parser.add_argument('--s3', dest='file_source', default='local', action='store_const', const='s3', help='load dataset from Amazon S3 (default: loading files from local)')
@@ -143,7 +143,7 @@ def main(argv):
         secret_key = config.get('s3','secret_key')
         #key_id='AKIAI2R46NYDXGT2LJEQ'
         #secret_key='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'
-        Ab_rdd = sc.textFile('s3n://'+key_id+':'+secret_key+'@jiyan/rand_matrix_alg_data/'+filename+'txt',args.npartitions)
+        Ab_rdd = sc.textFile('s3n://'+key_id+':'+secret_key+'@jiyan/rand_matrix_alg_data/'+args.dataset+'.txt',args.npartitions)
         #x_opt = sc.textFile('s3n://'+key_id+':'+secret_key+'@jiyan/rand_matrix_alg_data/'+filename+'_x_opt.txt')
         #x_opt = np.array([float(x) for x in x_opt.collect()])
         #f_opt = sc.textFile('s3n://'+key_id+':'+secret_key+'@jiyan/rand_matrix_alg_data/'+filename+'_f_opt.txt')
