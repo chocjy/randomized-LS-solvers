@@ -121,7 +121,7 @@ def main(argv):
     config.read(args.setting_filename)
 
     data_dir = config.get('local_directories','data_dir')
-    spark_logs_dir = 'file://'+os.path.dirname(os.path.abspath(__file__))+config.get('local_directories','spark_logs_dir')
+    spark_logs_dir = 'file://'+os.path.dirname(os.path.abspath(__file__))+'/'+config.get('local_directories','spark_logs_dir')
     
     logging.config.fileConfig(args.logging_filename, disable_existing_loggers=False) # setting up the logger
     logger = logging.getLogger('') #using root
@@ -143,7 +143,6 @@ def main(argv):
         key_id = config.get('s3','key_id')
         secret_key = config.get('s3','secret_key')
         Ab_rdd = sc.textFile('s3n://'+key_id+':'+secret_key+'@'+s3_dir+args.dataset+'.txt',args.npartitions)
-#jiyan/rand_matrix_alg_data/
     else:
         A = np.loadtxt(data_dir+args.dataset+'.txt') #loading dataset from local disc
         Ab_rdd = sc.parallelize(A.tolist(),args.npartitions)
