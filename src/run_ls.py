@@ -116,7 +116,6 @@ def main(argv):
         raise ValueError('Please enter a projection size!')
 
     # loading configuration file
-    #settings_file = 'settings.cfg'
     config = ConfigParser.RawConfigParser()
     config.read(args.setting_filename)
 
