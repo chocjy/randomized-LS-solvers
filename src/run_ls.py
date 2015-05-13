@@ -141,15 +141,7 @@ def main(argv):
     elif args.file_source=='s3':
         key_id = config.get('s3','key_id')
         secret_key = config.get('s3','secret_key')
-        #key_id='AKIAI2R46NYDXGT2LJEQ'
-        #secret_key='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'
         Ab_rdd = sc.textFile('s3n://'+key_id+':'+secret_key+'@jiyan/rand_matrix_alg_data/'+args.dataset+'.txt',args.npartitions)
-        #x_opt = sc.textFile('s3n://'+key_id+':'+secret_key+'@jiyan/rand_matrix_alg_data/'+filename+'_x_opt.txt')
-        #x_opt = np.array([float(x) for x in x_opt.collect()])
-        #f_opt = sc.textFile('s3n://'+key_id+':'+secret_key+'@jiyan/rand_matrix_alg_data/'+filename+'_f_opt.txt')
-        #f_opt = float(f_opt.collect()[0])
-        #b = sc.textFile('s3n://'+key_id+':'+secret_key+'@jiyan/rand_matrix_alg_data/'+filename+'_b.txt')
-        #b = np.array([float(x) for x in b.collect()])
     else:
         A = np.loadtxt(data_dir+args.dataset+'.txt') #loading dataset from local disc
         Ab_rdd = sc.parallelize(A.tolist(),args.npartitions)
