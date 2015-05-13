@@ -50,14 +50,12 @@ class RandLeastSquares:
                 self.k = 1
                 time_proj = 0
 
-            b = []
-
-            # start lsqr
+            # start LSQR
             time = [time_proj for i in range(num_iters)]
             x = []
  
             for i in range(self.k):
-                x_iter, y_iter, time_iter = lsqr_spark(self.matrix_Ab,b,self.matrix_Ab.m,self.matrix_Ab.n,N[i],1e-10,num_iters)
+                x_iter, y_iter, time_iter = lsqr_spark(self.matrix_Ab,self.matrix_Ab.m,self.matrix_Ab.n,N[i],1e-10,num_iters)
                 x.append(x_iter)
                 time = [time[i] + time_iter[i] for i in range(num_iters)]
             
@@ -75,7 +73,8 @@ class RandLeastSquares:
             costs = [ comp_l2_obj(self.matrix_Ab.rdd_original,np.array(p)) for p in x ]
         elif stack_type == 2: 
             n = self.matrix_Ab.n
-            a = [ repnum*comp_l2_obj(self.matrix_Ab.matrix_original,p)**2 - (repnum-1)*npl.norm( p[n/2:] - b[-n/2:])**2 for p in x ]
+            b = self.matrix_Ab.get_b()
+            a = [ repnum*comp_l2_obj(self.matrix_Ab.rdd_original,p)**2 - (repnum-1)*npl.norm( p[n/2:] - b[-n/2:])**2 for p in x ]
             costs = [ np.sqrt(aa)/np.sqrt(repnum) for aa in a ]
 
         return costs

@@ -36,7 +36,7 @@ class RowMatrix(object):
                 self.m = self.m_original*repnum
             elif stack_type == 2:
                 n = self.n
-                self.rdd = add_index(self.rdd_original).flatMap(lambda row: [row[0] for i in range(repnum)] if row[1]<self.m_original-n/2 else [row[0]])
+                self.rdd = self.rdd_original.flatMap(lambda row: [row for i in range(repnum)] if len(np.nonzero(row)[0])>2 else [row])
                 self.m = (self.m_original-self.n/2)*repnum + self.n/2
         else:
             self.name = name
@@ -87,7 +87,6 @@ class RowMatrix(object):
         if vec.ndim > 1:
             vec = vec_in_dict.squeeze()
 
-
         vec = self.rdd.context.broadcast(vec)
 
         matrix_ltimes_mapper = MatrixLtimesMapper()
@@ -132,7 +131,7 @@ class MatrixLtimesMapper(BlockMapper):
     def process(self, vec):
         vec = vec[self.keys]
 
-        if self.ba:
+        if self.ba is not None:
             self.ba += np.dot( vec, np.vstack(self.data) )
         else:
             self.ba = np.dot( vec, np.vstack(self.data) )
