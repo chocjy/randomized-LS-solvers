@@ -35,7 +35,8 @@ subsampled randomized discrete Hartley transform
 + `test/`: contains basic test codes
 + `N_file/`: stores matrices obtained by the sketches that can be reused in the future
 + `result/`: stores the computed solutions and total running time
-+ `log/`: stores the Spark log files (if the flag `--save_logs` in on)
++ `log/`: stores Python logging files (stage updates and computed accuracies will be logged)
++ `spark_log/`: stores the Spark log files (if the flag `--save_logs` in on)
 
 ## Input
   Current implementation assumes that the augmented matrix [*A* *b*] is stored in plain text format with file name `FILENAME.txt` (meaning the last column is the response vector b). It can be loaded from one of the following three sources:
@@ -55,7 +56,7 @@ For the purpose of evaluating the computed solutions, files named `FILENAME_x_op
 + `spark_logs_dir`: path to the folder that stores the Spark log files (if the flag `--save_logs` in on)
 In `hdfs` and `s3` sections, paths leading the dataset should be provided if either file system if used. For S3, `key_id` and `secret_key` are also required.
 
-The default filename for Python logging module is `conf/logging.cfg`. Stage updates and computed accuracies will be logged. Its configuration (e.g., location of the log file) can be set via the configuration file.
+The default configuration filename for Python logging module is `conf/logging.cfg`. Configurations (e.g., location of the log file) can be set via this file.
   
 Configuration files with names other than the default ones can be passed into the program using `--setting_filename settingConfFilename` and `--logging_filename settingConfFilename`.
 
