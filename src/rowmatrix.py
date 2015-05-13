@@ -131,7 +131,7 @@ class MatrixLtimesMapper(BlockMapper):
     def process(self, vec):
         vec = vec[self.keys]
 
-        if self.ba:
+        if self.ba is not None:
             self.ba += np.dot( vec, np.vstack(self.data) )
         else:
             self.ba = np.dot( vec, np.vstack(self.data) )
