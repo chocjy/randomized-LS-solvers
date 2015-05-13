@@ -35,7 +35,8 @@ subsampled randomized discrete Hartley transform
 + `test/`: contains basic test codes
 + `N_file/`: stores matrices obtained by the sketches that can be reused in the future
 + `result/`: stores the computed solutions and total running time
-+ `log/`: stores the Spark log files (if the flag `--save_logs` in on)
++ `log/`: stores Python logging files (stage updates and computed accuracies will be logged)
++ `spark_log/`: stores the Spark log files (if the flag `--save_logs` in on)
 
 ## Input
   Current implementation assumes that the augmented matrix [*A* *b*] is stored in plain text format with file name `FILENAME.txt` (meaning the last column is the response vector b). It can be loaded from one of the following three sources:
@@ -50,13 +51,12 @@ For the purpose of evaluating the computed solutions, files named `FILENAME_x_op
 ## Configuration
   The Spark configurations can be set via the script `run_ls.sh` from which the Spark job is submitted. Two `.cfg` files storing general setting of the program and Python logging setting respectively are needed to be set.
   
-  The default filename for general setting is `conf/setting.cfg` in which there are two sections, namley, `directories` and `s3`. In `directories` section, three directories are needed to be set so that the files can be properly loaded and saved. 
+  The default filename for general setting is `conf/setting.cfg` in which there are three sections, namley, `local_directories`, `hdfs` and `s3`. In `local_directories` section, two directories are needed to be set so that the files can be properly loaded and saved. 
 + `data_dir`: path to local data files
-+ `hdfs_dir`: path in HDFS which stores the data files
 + `spark_logs_dir`: path to the folder that stores the Spark log files (if the flag `--save_logs` in on)
-In `s3` section, `key_id` and `secret_key` have to be provided when using Amazon EC2 and loading files from S3 file system.
+In `hdfs` and `s3` sections, paths leading the dataset should be provided if either file system if used. For S3, `key_id` and `secret_key` are also required.
 
-The default filename for Python logging module is `conf/logging.cfg`. Stage updates and computed accuracies will be logged. Its configuration (e.g., location of the log file) can be set via the configuration file.
+The default configuration filename for Python logging module is `conf/logging.cfg`. Configurations (e.g., location of the log file) can be set via this file.
   
 Configuration files with names other than the default ones can be passed into the program using `--setting_filename settingConfFilename` and `--logging_filename settingConfFilename`.
 
