@@ -72,9 +72,9 @@ def comp_sketch(matrix, objective, load_N=False, save_N=False, N_dir='../N_file/
 
             if save_N and new_N_proj:
                 logger.info('Saving N matrices from projections!')
-                filename = N_dir + 'N_' + matrix.name + '_projection_' + kwargs.get('projection_type') + '_c' + str(int(kwargs.get('c'))) + '_k' + str(int(kwargs.get('k'))) + '.dat'
+                #filename = N_dir + 'N_' + matrix.name + '_projection_' + kwargs.get('projection_type') + '_c' + str(int(kwargs.get('c'))) + '_k' + str(int(kwargs.get('k'))) + '.dat'
                 data = {'N': N_proj, 'time': t_proj}
-                pickle_write(filename,data)
+                pickle_write(N_proj_filename,data)
 
             if save_N:
                 logger.info('Saving N matrices from sampling!')
@@ -94,7 +94,7 @@ def comp_sketch(matrix, objective, load_N=False, save_N=False, N_dir='../N_file/
 
             if load_N and os.path.isfile(N_proj_filename):
                 logger.info('Found N matrices from projections, loading them!')
-                result = pickle_load(filename)
+                result = pickle_load(N_proj_filename)
                 N = result['N']
                 t = result['time']
             else:
@@ -105,9 +105,9 @@ def comp_sketch(matrix, objective, load_N=False, save_N=False, N_dir='../N_file/
 
                 if save_N:
                     logger.info('Saving N matrices from projections!')
-                    filename = N_dir + 'N_' + matrix.name + '_projection_' + kwargs.get('projection_type') + '_c' + str(int(kwargs.get('c'))) + '_k' + str(int(kwargs.get('k')))+ '.dat'
+                    #filename = N_dir + 'N_' + matrix.name + '_projection_' + kwargs.get('projection_type') + '_c' + str(int(kwargs.get('c'))) + '_k' + str(int(kwargs.get('k')))+ '.dat'
                     data = {'N': N, 'time': t}
-                    pickle_write(filename,data)
+                    pickle_write(N_proj_filename,data)
 
         elif sketch_type == 'sampling':
             s = kwargs.get('s')
@@ -150,15 +150,15 @@ def comp_sketch(matrix, objective, load_N=False, save_N=False, N_dir='../N_file/
 
             if save_N and new_N_proj:
                 logger.info('Saving N matrices from projections!')
-                filename = N_dir + 'N_' + matrix.name + '_projection_' + kwargs.get('projection_type') + '_c' + str(int(kwargs.get('c'))) + '_k' + str(int(kwargs.get('k'))) + '.dat'
+                #filename = N_dir + 'N_' + matrix.name + '_projection_' + kwargs.get('projection_type') + '_c' + str(int(kwargs.get('c'))) + '_k' + str(int(kwargs.get('k'))) + '.dat'
                 data = {'N': N_proj, 'time': t_proj}
-                pickle_write(filename,data)
+                pickle_write(N_proj_filename,data)
 
             if save_N and new_N_samp:
                 logger.info('Saving N matrices from sampling!')
-                filename = N_dir + 'N_' + matrix.name + '_sampling_s' + str(int(kwargs.get('s'))) + '_' + kwargs.get('projection_type') + '_c' + str(int(kwargs.get('c'))) + '_k' + str(int(kwargs.get('k'))) + '.dat'
+                #filename = N_dir + 'N_' + matrix.name + '_sampling_s' + str(int(kwargs.get('s'))) + '_' + kwargs.get('projection_type') + '_c' + str(int(kwargs.get('c'))) + '_k' + str(int(kwargs.get('k'))) + '.dat'
                 data = {'N': N_proj, 'time': t}
-                pickle_write(filename,data)
+                pickle_write(N_samp_filename,data)
 
         else:
             raise ValueError('Please enter a valid sketch type!')
