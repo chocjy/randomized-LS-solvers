@@ -143,7 +143,6 @@ def main(argv):
         key_id = config.get('s3','key_id')
         secret_key = config.get('s3','secret_key')
         Ab_rdd = sc.textFile('s3n://'+key_id+':'+secret_key+'@'+s3_dir+args.dataset+'.txt',args.npartitions)
-#jiyan/rand_matrix_alg_data/
     else:
         A = np.loadtxt(data_dir+args.dataset+'.txt') #loading dataset from local disc
         Ab_rdd = sc.parallelize(A.tolist(),args.npartitions)
