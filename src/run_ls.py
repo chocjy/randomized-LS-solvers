@@ -121,7 +121,7 @@ def main(argv):
     config.read(args.setting_filename)
 
     data_dir = config.get('local_directories','data_dir')
-    spark_logs_dir = 'file://'+os.path.dirname(os.path.abspath(__file__))+config.get('local_directories','spark_logs_dir')
+    spark_logs_dir = 'file://'+os.path.dirname(os.path.abspath(__file__))+'/'+config.get('local_directories','spark_logs_dir')
     
     logging.config.fileConfig(args.logging_filename, disable_existing_loggers=False) # setting up the logger
     logger = logging.getLogger('') #using root
