@@ -29,8 +29,6 @@ dense Rademacher transform
 + srdht:
 subsampled randomized discrete Hartley transform
 
-See http://arxiv.org/abs/1502.03032 for more details.
-
 ## Folders
 + `src/`: contains all the source codes
 + `data/`: default path to local files storing datasets
@@ -40,29 +38,39 @@ See http://arxiv.org/abs/1502.03032 for more details.
 + `log/`: stores the Spark log files (if the flag `--save_logs` in on)
 
 ## Input
-  Current implementation assumes that the matrix that stores the augmented linear system [*A* *b*] is stored in plain text format with file name FILENAME.txt (meaning the last column is the RHS vector b). It can be stored either locally or in HDFS. For the purpose of evaluating the computed solutions, files named FILENAME_x_opt.txt and FILENAME_f_opt.txt which store the optimal solution vector and objective value should be provided in `data_dire` (see below); otherwise they will be computed in the program which might take long. To generate larger matrices, one can use the option `--nrepetitions NUM` to creat a larger matrix by stacking the original one vertically NUM times.
+  Current implementation assumes that the augmented matrix [*A* *b*] is stored in plain text format with file name `FILENAME.txt` (meaning the last column is the response vector b). It can be loaded from one of the following three sources:
++ local: from local disc (default)
++ HDFS: from Hadoop file system (using `--hdfs`)
++ S3: from Amazon S3 file system (using `--s3`)
+For the purpose of evaluating the computed solutions, files named `FILENAME_x_opt.txt` and `FILENAME_f_opt.txt` which store the optimal solution vector and objective value should be provided in the local folder `data_dir` (see below); otherwise they will be computed in the program. To generate larger matrices, one can use the option `--nrepetitions NUM` to creat a larger matrix by stacking the original one vertically `NUM` times.
 
 ## Output
   A file which stores the computed solutions and total running time will be stored (default file name is ls.out) in the `result/` subdirectory. This file can be opened by the cPickle module.
 
 ## Configuration
-  The Spark configurations can be set via the script `run_ls.sh` from which the Spark job is submitted.
-
-  Besides, there are three directories needed to be set so that the files can be properly loaded and saved. They can be set via the file `settings.cfg`.
-
+  The Spark configurations can be set via the script `run_ls.sh` from which the Spark job is submitted. Two `.cfg` files storing general setting of the program and Python logging setting respectively are needed to be set.
+  
+  The default filename for general setting is `conf/setting.cfg` in which there are two sections, namley, `directories` and `s3`. In `directories` section, three directories are needed to be set so that the files can be properly loaded and saved. 
 + `data_dir`: path to local data files
 + `hdfs_dir`: path in HDFS which stores the data files
-+ `logs_dir`: path to the folder that stores the Spark log files (if the flag `--save_logs` in on)
++ `spark_logs_dir`: path to the folder that stores the Spark log files (if the flag `--save_logs` in on)
+In `s3` section, `key_id` and `secret_key` have to be provided when using Amazon EC2 and loading files from S3 file system.
+
+The default filename for Python logging module is `conf/logging.cfg`. Stage updates and computed accuracies will be logged. Its configuration (e.g., location of the log file) can be set via the configuration file.
+  
+Configuration files with names other than the default ones can be passed into the program using `--setting_filename settingConfFilename` and `--logging_filename settingConfFilename`.
 
 ## Usage
 ```sh
 $ ./run_ls.sh [-h] --dims m n [--nrepetitions numRepetitions]
-                 [--npartitions numPartitions] [-c] [--hdfs]
+                 [--stack stackType] [--npartitions numPartitions]
+                 [--setting_filename settingConfFilename]
+                 [--logging_filename loggingConfFilename] [-c] [--hdfs | --s3]
                  [--low-precision | --high_precision]
                  [--projection | --sampling]
-                 [-p {cw,gaussian,rademacher,srdht}] -r projectionSize
+                 [-p {cw,gaussian,rademacher,srdht}] [-r projectionSize]
                  [-s samplingSize] [-q numIters] [-k numTrials] [-t]
-                 [--save_logs] [--output_filename OUTPUT_FILENAME] [--load_N]
+                 [--save_logs] [--output_filename outputFilename] [--load_N]
                  [--save_N] [--debug]
                  dataset
 ```

@@ -120,9 +120,8 @@ def main(argv):
     config = ConfigParser.RawConfigParser()
     config.read(args.setting_filename)
 
-    data_dir = config.get('directories','data_dir')
-    hdfs_dir = config.get('directories','hdfs_dir')
-    spark_logs_dir = 'file://'+os.path.dirname(os.path.abspath(__file__))+config.get('directories','spark_logs_dir')
+    data_dir = config.get('local_directories','data_dir')
+    spark_logs_dir = 'file://'+os.path.dirname(os.path.abspath(__file__))+config.get('local_directories','spark_logs_dir')
     
     logging.config.fileConfig(args.logging_filename, disable_existing_loggers=False) # setting up the logger
     logger = logging.getLogger('') #using root
@@ -137,11 +136,14 @@ def main(argv):
     sc = SparkContext(appName="ls_exp",conf=conf)
 
     if args.file_source=='hdfs':
+        hdfs_dir = config.get('hdfs','hdfs_dir')
         Ab_rdd = sc.textFile(hdfs_dir+args.dataset+'.txt',args.npartitions) #loading dataset from HDFS
     elif args.file_source=='s3':
+        s3_dir = config.get('s3','s3_dir')
         key_id = config.get('s3','key_id')
         secret_key = config.get('s3','secret_key')
-        Ab_rdd = sc.textFile('s3n://'+key_id+':'+secret_key+'@jiyan/rand_matrix_alg_data/'+args.dataset+'.txt',args.npartitions)
+        Ab_rdd = sc.textFile('s3n://'+key_id+':'+secret_key+'@'+s3_dir+args.dataset+'.txt',args.npartitions)
+#jiyan/rand_matrix_alg_data/
     else:
         A = np.loadtxt(data_dir+args.dataset+'.txt') #loading dataset from local disc
         Ab_rdd = sc.parallelize(A.tolist(),args.npartitions)
