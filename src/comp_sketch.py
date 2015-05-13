@@ -50,11 +50,11 @@ def comp_sketch(matrix, objective, load_N=False, save_N=False, N_dir='../N_file/
         elif sketch_type == 'sampling':
             s = kwargs.get('s')
             new_N_proj = 0
-            N_proj_filename = filename = N_dir + 'N_' + matrix.name + '_projection_' + kwargs.get('projection_type') + '_c' + str(int(kwargs.get('c'))) + '_k' + str(int(kwargs.get('k'))) +'.dat'
+            N_proj_filename = N_dir + 'N_' + matrix.name + '_projection_' + kwargs.get('projection_type') + '_c' + str(int(kwargs.get('c'))) + '_k' + str(int(kwargs.get('k'))) +'.dat'
 
             if load_N and os.path.isfile(N_proj_filename):
                 logger.info('Found N matrices from projections, loading them!')
-                N_proj_filename = filename = N_dir + 'N_' + matrix.name + '_projection_' + kwargs.get('projection_type') + '_c' + str(int(kwargs.get('c'))) + '_k' + str(int(kwargs.get('k'))) +'.dat'
+                N_proj_filename = N_dir + 'N_' + matrix.name + '_projection_' + kwargs.get('projection_type') + '_c' + str(int(kwargs.get('c'))) + '_k' + str(int(kwargs.get('k'))) +'.dat'
                 result = pickle_load(N_proj_filename)
                 N_proj = result['N']
                 t_proj = result['time']
@@ -90,7 +90,7 @@ def comp_sketch(matrix, objective, load_N=False, save_N=False, N_dir='../N_file/
 
     elif objective == 'N':
         if sketch_type == 'projection':
-            N_proj_filename = filename = N_dir + 'N_' + matrix.name + '_projection_' + kwargs.get('projection_type') + '_c' + str(int(kwargs.get('c'))) + '_k' + str(int(kwargs.get('k'))) + '.dat'
+            N_proj_filename = N_dir + 'N_' + matrix.name + '_projection_' + kwargs.get('projection_type') + '_c' + str(int(kwargs.get('c'))) + '_k' + str(int(kwargs.get('k'))) + '.dat'
 
             if load_N and os.path.isfile(N_proj_filename):
                 logger.info('Found N matrices from projections, loading them!')
