@@ -131,9 +131,9 @@ def main(argv):
  
     # instantializing a Spark instance
     if args.save_logs:
-        conf = SparkConf().set('spark.eventLog.enabled','true').set('spark.eventLog.dir',spark_logs_dir)
+        conf = SparkConf().set('spark.eventLog.enabled','true').set('spark.eventLog.dir',spark_logs_dir).set('spark.driver.maxResultSize', '20g')
     else:
-        conf = SparkConf()
+        conf = SparkConf().set('spark.driver.maxResultSize', '20g')
     sc = SparkContext(appName="ls_exp",conf=conf)
 
     if args.file_source=='hdfs':
