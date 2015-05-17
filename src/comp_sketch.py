@@ -157,7 +157,7 @@ def comp_sketch(matrix, objective, load_N=False, save_N=False, N_dir='../N_file/
             if save_N and new_N_samp:
                 logger.info('Saving N matrices from sampling!')
                 #filename = N_dir + 'N_' + matrix.name + '_sampling_s' + str(int(kwargs.get('s'))) + '_' + kwargs.get('projection_type') + '_c' + str(int(kwargs.get('c'))) + '_k' + str(int(kwargs.get('k'))) + '.dat'
-                data = {'N': N_proj, 'time': t}
+                data = {'N': N, 'time': t}
                 pickle_write(N_samp_filename,data)
 
         else:
