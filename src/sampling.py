@@ -63,6 +63,6 @@ class SampleMapper(BlockMapper):
             p = lev*s/lev_sum[i]
             p[ p>1 ] = 1.0
             sampled_idx = np.random.rand(len(p)) < p
-            yield (i, (1./p[sampled_idx])[:,None]*data[sampled_idx,])
+            yield (i, (1./np.sqrt(p[sampled_idx]))[:,None]*data[sampled_idx,])
 
 
